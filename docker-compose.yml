@@ -24,8 +24,11 @@ services:
       - "5000:5000"
     depends_on:
       - db
+    volumes:
+      - .:/app
     networks:
-        - backend
+      - backend
+    command: python ./run_server.py
 
 volumes:
   - postgres_data:
