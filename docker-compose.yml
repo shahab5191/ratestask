@@ -2,8 +2,6 @@ services:
   db:
     build:
       context: ./db
-    env_file:
-      - .env
     container_name: postgres_db
     ports:
       - "5432:5432"
@@ -16,8 +14,6 @@ services:
     build: 
       context: ./
     container_name: flask_server
-    env_file:
-      - .env
     environment:
       FLASK_ENV: development
       DB_HOST: db
