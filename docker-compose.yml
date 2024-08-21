@@ -3,6 +3,9 @@ services:
     build:
       context: ./db
     container_name: postgres_db
+    environment:
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
     ports:
       - "5432:5432"
     volumes:
@@ -17,6 +20,8 @@ services:
     environment:
       FLASK_ENV: development
       DB_HOST: db
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
     ports:
       - "5000:5000"
     depends_on:
