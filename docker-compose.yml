@@ -2,9 +2,9 @@ services:
   db:
     build:
       context: ./db
+    env_file:
+      - .env
     container_name: postgres_db
-    environment:
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
     ports:
       - "5432:5432"
     volumes:
@@ -16,9 +16,11 @@ services:
     build: 
       context: ./
     container_name: flask_server
+    env_file:
+      - .env
     environment:
       FLASK_ENV: development
-      DB_URL: postgres://${DB_USER}:${DB_PASSWORD}@db:5432/postgres
+      DB_HOST: db
     ports:
       - "5000:5000"
     depends_on:
