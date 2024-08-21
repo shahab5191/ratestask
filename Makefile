@@ -19,7 +19,7 @@ clean:
 # Run tests
 .PHONY: test
 test:
-	$(DOCKER_COMPOSE) run --rm web $(PYTEST) test/
+	$(DOCKER_COMPOSE) run --rm web $(PYTEST)
 
 # Run flake8 linter
 .PHONY: lint
