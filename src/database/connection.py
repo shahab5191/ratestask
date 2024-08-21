@@ -11,7 +11,6 @@ load_dotenv(os.path.join(basedir, '.env'))
 
 def get_db_connection():
     """Establish and return a database connection"""
-    print(Config().DATABASE_CONFIG)
     conn = psycopg2.connect(**Config().DATABASE_CONFIG)
     return conn
 
