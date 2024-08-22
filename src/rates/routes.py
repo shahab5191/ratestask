@@ -1,8 +1,6 @@
-from flask import jsonify, request
+from flask import request
 from pydantic import ValidationError
 from src.config import Config
-from src.database.connection import execute_query
-from src.database.convert_to_dict import convert_to_dict
 from src.rates import bp
 from src.rates.query import get_rates
 from loguru import logger
@@ -11,6 +9,23 @@ from src.rates.schema import RateQueryParams
 
 @bp.get(f"{Config().API_PREFIX}/rates")
 def rates_endpoint():
+    """
+    Retrieve rate data based on query parameters.
+
+    This endpoint retrieves rate information filtered by the provided query parameters:
+    - `date_from` (str): Start date for filtering the rates (format: YYYY-MM-DD).
+    - `date_to` (str): End date for filtering the rates (format: YYYY-MM-DD).
+    - `origin` (str): Origin location code for filtering the rates.
+    - `destination` (str): Destination location code for filtering the rates.
+
+    The function processes these parameters, validates them, and fetches the corresponding 
+    rates from the data source. In case of validation errors, an error message is returned. 
+    For other exceptions, an internal server error is returned.
+
+    Returns:
+        dict: A JSON object containing either the rate data under the "rates" key 
+        or an error message under the "error" key.
+    """ # noqa
     try:
         query_params = RateQueryParams(
             date_from=request.args.get("date_from"),
@@ -29,23 +44,3 @@ def rates_endpoint():
         return {"error": "Internal error"}, 500
 
     return {"rates": rates}
-
-
-@bp.get(f"{Config().API_PREFIX}/prices")
-def get_prices():
-    query = 'SELECT * FROM prices LIMIT 10'
-    colnames, rows = execute_query(query)
-
-    prices = convert_to_dict(colnames, rows)
-
-    return jsonify({"prices": prices})
-
-
-@bp.get(f"{Config().API_PREFIX}/ports")
-def get_ports():
-    query = 'SELECT * FROM ports LIMIT 10'
-    colnames, rows = execute_query(query)
-
-    ports = convert_to_dict(colnames, rows)
-
-    return jsonify({"ports": ports})
