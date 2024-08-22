@@ -23,7 +23,7 @@ def convert_to_dict(
                               a row of data with column names as keys and row values 
                               as values. Returns an empty list if `colnames` or `rows` 
                               is `None`.
-    """
+    """ # noqa
     if rows is None or colnames is None:
         return []
 

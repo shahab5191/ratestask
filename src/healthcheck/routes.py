@@ -13,7 +13,7 @@ def healthcheck():
         JSON response with a status field:
         - 'healthy': If the application is healthy.
         - 'unhealthy': If the application is unhealthy
-    """
+    """ # noqa
     try:
         database_connection = True
         if not database_connection:

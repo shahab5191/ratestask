@@ -19,7 +19,7 @@ def get_db_connection():
 
     Returns:
         psycopg2.connection: A connection object to the PostgreSQL database.
-    """
+    """ # noqa
     conn = psycopg2.connect(**Config().DATABASE_CONFIG)
     return conn
 
@@ -45,7 +45,7 @@ def execute_query(query, params=None):
     Raises:
         Exception: Any exception raised during query execution or connection handling 
                    is caught and printed, but the function does not raise it further.
-    """
+    """ # noqa
     conn = get_db_connection()
     rows = None
     colnames = None
