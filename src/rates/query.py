@@ -47,8 +47,8 @@ def get_rates():
                     OR orig.code IN (SELECT * FROM orig_ports))
             AND (dest.parent_slug IN (SELECT * FROM dest_sub_regions)
                 OR dest.code IN (SELECT * FROM dest_ports))
-            AND p.day <= '2016-01-30'
-            AND p.day >= '2016-01-01'
+            AND p.day <= %(date_to)s
+            AND p.day >= %(date_from)s
             GROUP BY p.day
         )
         SELECT d.day, average_price
@@ -56,8 +56,8 @@ def get_rates():
         RIGHT JOIN (
             SELECT date::date AS day
             FROM generate_series(
-                '2016-01-01'::date,
-                '2016-01-30'::date,
+                %(date_from)s::date,
+                %(date_to)s::date,
                 '1 day'::interval
             ) AS date
         ) d ON d.day = pd.day
@@ -66,7 +66,9 @@ def get_rates():
 
     params = {
         "origin": "china_main",
-        "destination": "skandinavia"
+        "destination": "northern_europe",
+        "date_to": "2016-01-15",
+        "date_from": "2016-01-01"
     }
 
     colnames, rows = execute_query(query, params)
