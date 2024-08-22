@@ -1,8 +1,9 @@
 from src.database.connection import execute_query
 from src.database.convert_to_dict import convert_to_dict
+from src.rates.schema import RateQueryParams
 
 
-def get_rates():
+def get_rates(params: RateQueryParams):
     query = """
         WITH RECURSIVE orig_sub_regions AS (
             SELECT slug
@@ -64,14 +65,7 @@ def get_rates():
         ORDER BY d.day;
     """# noqa
 
-    params = {
-        "origin": "china_main",
-        "destination": "northern_europe",
-        "date_to": "2016-01-15",
-        "date_from": "2016-01-01"
-    }
-
-    colnames, rows = execute_query(query, params)
+    colnames, rows = execute_query(query, params.model_dump())
 
     rates = convert_to_dict(colnames, rows)
     return rates
