@@ -1,4 +1,3 @@
-from flask import jsonify
 from src.config import Config
 from src.healthcheck import bp
 from src.utils.database_connection_check import is_db_connection_healthy
@@ -17,8 +16,8 @@ def healthcheck():
     """ # noqa
     try:
         if not is_db_connection_healthy():
-            return jsonify(status='unhealthy'), 503
+            return {"status": 'unhealthy'}, 503
     except Exception as e:
-        return jsonify(status='unhealthy', error=str(e)), 500
+        return {"status": 'unhealthy', "error": str(e)}, 500
 
-    return jsonify(status='healthy')
+    return {"status": "healthy"}, 200
