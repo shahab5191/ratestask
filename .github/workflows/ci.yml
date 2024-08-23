@@ -29,6 +29,18 @@ jobs:
         sudo apt-get update
         sudo apt-get install docker-compose
 
+    - name: Build containers
+      run: make install
+      env:
+        DOCKER_BUILDKIT: 1
+        DB_USER: ${{ secrets.DB_USER }}
+        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+
+    - name: View logs
+      run: |
+        docker-compose logs db
+        docker-compose logs web
+
     - name: Build and run with Docker Compose
       run: |
         make lint
