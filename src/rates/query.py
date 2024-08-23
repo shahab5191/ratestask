@@ -1,5 +1,5 @@
 from src.database.connection import execute_query
-from src.database.convert_to_dict import convert_to_dict
+from src.utils.convert_to_dict import convert_to_dict
 from src.rates.schema import RateQueryParams
 
 
