@@ -1,11 +1,11 @@
 import datetime
-from typing import Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 
 def convert_to_dict(
     colnames: Optional[List[str]],
-    rows: Optional[Tuple[str]],
-    date_format: Optional[str],
+    rows: Optional[List[Tuple[Any, ...]]],
+    date_format: Optional[str] = None,
 ) -> List[Dict[str, str]]:
     """
     Convert database query results into a list of dictionaries.
