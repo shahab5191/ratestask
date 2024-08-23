@@ -1,11 +1,11 @@
 import datetime
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional, Tuple
 
 
 def convert_to_dict(
-    colnames: List[str] | None,
-    rows: Tuple[str] | None,
-    date_format: str | None,
+    colnames: Optional[List[str]],
+    rows: Optional[Tuple[str]],
+    date_format: Optional[str],
 ) -> List[Dict[str, str]]:
     """
     Convert database query results into a list of dictionaries.
@@ -15,10 +15,12 @@ def convert_to_dict(
     Each dictionary maps column names to their corresponding values in each row.
 
     Args:
-        colnames (List[str] | None): A list of column names. If `None`, no conversion 
+        colnames (Optional[List[str]]): A list of column names. If `None`, no conversion 
                                      is performed.
-        rows (Tuple[str] | None): A tuple of rows, where each row is a tuple of column 
+        rows (Optional[Tuple[str]]): A tuple of rows, where each row is a tuple of column 
                                   values. If `None`, no conversion is performed.
+        date_format (Optional[str]): An string containing formatting for date objects
+                                    returned from database. if None, it will not format dates
 
     Returns:
         List[Dict[str, str]]: A list of dictionaries, where each dictionary represents 
