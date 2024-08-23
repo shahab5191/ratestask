@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Proposal for Query Optimization: Leveraging Indexing and Denormalization &mdash; Rates Task  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="SERVER API" href="api_references.html" />
+    <link rel="prev" title="Getting Started" href="getting_started.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Rates Task
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html#indices-and-tables">Indices and tables</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Proposal for Query Optimization: Leveraging Indexing and Denormalization</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#objective">Objective</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#current-strategy">Current Strategy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#proposed-denormalization">Proposed Denormalization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#example-query-using-denormalization">Example Query Using Denormalization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#advantages">Advantages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#drawbacks">Drawbacks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#performance-analysis">Performance Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#conclusion">Conclusion</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api_references.html">SERVER API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_references.html#rate-endpoint">Rate Endpoint</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_references.html#database">Database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_references.html#utility">Utility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_references.html#health-check">Health Check</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Rates Task</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Proposal for Query Optimization: Leveraging Indexing and Denormalization</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/optimization.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="proposal-for-query-optimization-leveraging-indexing-and-denormalization">
+<h1>Proposal for Query Optimization: Leveraging Indexing and Denormalization<a class="headerlink" href="#proposal-for-query-optimization-leveraging-indexing-and-denormalization" title="Link to this heading"></a></h1>
+<section id="objective">
+<h2>Objective<a class="headerlink" href="#objective" title="Link to this heading"></a></h2>
+<p>To enhance query performance by optimizing indexing strategies and proposing a denormalization approach, considering the limited write operations (only four times a day).</p>
+</section>
+<section id="current-strategy">
+<h2>Current Strategy<a class="headerlink" href="#current-strategy" title="Link to this heading"></a></h2>
+<p>Given the low frequency of write operations, we can focus on optimizing read performance through indexing. To achieve this, I added several indexes to the <code class="docutils literal notranslate"><span class="pre">rates.sql</span></code> script:</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">CREATE</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_ports_parent_slug</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">ports</span><span class="p">(</span><span class="n">parent_slug</span><span class="p">);</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_regions_parent_slug</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">regions</span><span class="p">(</span><span class="n">parent_slug</span><span class="p">);</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_prices_orig_code</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">prices</span><span class="p">(</span><span class="n">orig_code</span><span class="p">);</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_prices_dest_code</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">prices</span><span class="p">(</span><span class="n">dest_code</span><span class="p">);</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_prices_day</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">prices</span><span class="p">(</span><span class="k">day</span><span class="p">);</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_prices_orig_dest_day</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">prices</span><span class="p">(</span><span class="n">orig_code</span><span class="p">,</span><span class="w"> </span><span class="n">dest_code</span><span class="p">,</span><span class="w"> </span><span class="k">day</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>In addition, I implemented unique constraints to ensure data integrity:</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">ports</span>
+<span class="w">    </span><span class="k">ADD</span><span class="w"> </span><span class="k">CONSTRAINT</span><span class="w"> </span><span class="n">unique_code</span><span class="w"> </span><span class="k">UNIQUE</span><span class="w"> </span><span class="p">(</span><span class="n">code</span><span class="p">);</span>
+
+<span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">regions</span>
+<span class="w">    </span><span class="k">ADD</span><span class="w"> </span><span class="k">CONSTRAINT</span><span class="w"> </span><span class="n">unique_slug</span><span class="w"> </span><span class="k">UNIQUE</span><span class="w"> </span><span class="p">(</span><span class="n">slug</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="proposed-denormalization">
+<h2>Proposed Denormalization<a class="headerlink" href="#proposed-denormalization" title="Link to this heading"></a></h2>
+<p>To further optimize performance, I propose denormalizing the data instead of relying on recursive queries to compile sub-regions for each requested region. The new <code class="docutils literal notranslate"><span class="pre">regions</span></code> table structure would be:</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">regions</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="n">slug</span><span class="w"> </span><span class="nb">text</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span>
+<span class="w">    </span><span class="n">name</span><span class="w"> </span><span class="nb">text</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span>
+<span class="w">    </span><span class="n">parent_slug</span><span class="w"> </span><span class="nb">text</span><span class="p">,</span>
+<span class="w">    </span><span class="n">port_codes</span><span class="w"> </span><span class="nb">text</span><span class="p">[]</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="example-query-using-denormalization">
+<h2>Example Query Using Denormalization<a class="headerlink" href="#example-query-using-denormalization" title="Link to this heading"></a></h2>
+<p>With the denormalized structure, we can simplify the process of retrieving all ports within a region without the need for recursion:</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="k">WITH</span><span class="w"> </span><span class="n">port_codes</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="k">SELECT</span><span class="w"> </span><span class="k">DISTINCT</span><span class="w"> </span><span class="k">unnest</span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">port_codes</span><span class="p">)</span>
+<span class="w">    </span><span class="k">FROM</span><span class="w"> </span><span class="n">regions</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">r</span>
+<span class="w">    </span><span class="k">WHERE</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">slug</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;GBSOU&#39;</span>
+
+<span class="w">    </span><span class="k">UNION</span><span class="w"> </span><span class="k">ALL</span>
+
+<span class="w">    </span><span class="k">SELECT</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="n">code</span>
+<span class="w">    </span><span class="k">FROM</span><span class="w"> </span><span class="n">ports</span><span class="w"> </span><span class="n">p</span>
+<span class="w">    </span><span class="k">WHERE</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="n">code</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;GBSOU&#39;</span>
+<span class="p">)</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">port_codes</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>This query effectively lists all ports in the specified region, including sub-regions, and then allows us to calculate the average price per day for all identified ports. The <code class="docutils literal notranslate"><span class="pre">UNION</span> <span class="pre">ALL</span></code> operation with <code class="docutils literal notranslate"><span class="pre">ports.code</span></code> ensures that the query returns the correct result, even if a port code is entered instead of a region name.</p>
+</section>
+<section id="advantages">
+<h2>Advantages<a class="headerlink" href="#advantages" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>Improved Performance:</strong> Reduces the need for expensive recursive queries, lowering computational costs.</p></li>
+<li><p><strong>Simplified Query Structure:</strong> Makes queries more straightforward and easier to maintain.</p></li>
+</ul>
+</section>
+<section id="drawbacks">
+<h2>Drawbacks<a class="headerlink" href="#drawbacks" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>Data Maintenance:</strong> This approach requires updating the <code class="docutils literal notranslate"><span class="pre">regions</span></code> table whenever a new port or sub-region is added. However, such updates are infrequent, making this a manageable concern.</p></li>
+</ul>
+</section>
+<section id="performance-analysis">
+<h2>Performance Analysis<a class="headerlink" href="#performance-analysis" title="Link to this heading"></a></h2>
+<p>To evaluate the effectiveness of the indexing strategy, I compared the <code class="docutils literal notranslate"><span class="pre">EXPLAIN</span></code> results before and after adding the indexes. The results showed minimal impact on overall query costs:</p>
+<ul class="simple">
+<li><p><strong>Before Indexes:</strong> Total cost ranged between 1509.03 and 1517.08.</p></li>
+<li><p><strong>After Indexes:</strong> Total cost ranged between 1509.34 and 1517.39.</p></li>
+</ul>
+<p>This slight increase suggests that, while indexing is important, it may not be sufficient alone to optimize this complex query.</p>
+</section>
+<section id="conclusion">
+<h2>Conclusion<a class="headerlink" href="#conclusion" title="Link to this heading"></a></h2>
+<p>Given the limited impact of indexing on query performance, the best approach for optimizing these complex queries is through denormalization and data redundancy. This strategy will significantly reduce the need for recursive operations and improve overall query efficiency.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="getting_started.html" class="btn btn-neutral float-left" title="Getting Started" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="api_references.html" class="btn btn-neutral float-right" title="SERVER API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Shahab Oveysi.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
