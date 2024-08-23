@@ -99,5 +99,5 @@ def get_rates(params: RateQueryParams):
 
     colnames, rows = execute_query(query, params.model_dump())
 
-    rates = convert_to_dict(colnames, rows)
+    rates = convert_to_dict(colnames, rows, date_format="%Y-%m-%d")
     return rates
