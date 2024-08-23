@@ -33,6 +33,8 @@ jobs:
       run: |
         echo "DB_USER=${{ secrets.DB_USER }}" >> .env
         echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+        echo ${{ DB_USER }}
+        echo ${{ DB_PASSWORD }}
         make install
       env:
         DOCKER_BUILDKIT: 1
