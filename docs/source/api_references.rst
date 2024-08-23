@@ -24,16 +24,14 @@ Query Module
 
 Database
 ========
-Connection
-----------
 .. automodule:: src.database.connection
     :members:
     :undoc-members:
     :show-inheritance:
 
 Utility
--------
-.. automodule:: src.database.convert_to_dict
+=======
+.. automodule:: src.utils.convert_to_dict
     :members:
     :undoc-members:
     :show-inheritance:

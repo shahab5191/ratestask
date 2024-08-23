@@ -1,4 +1,5 @@
 import os
+from typing import Any, List, Optional, Tuple
 import psycopg2
 from dotenv import load_dotenv
 
@@ -24,7 +25,10 @@ def get_db_connection():
     return conn
 
 
-def execute_query(query, params=None):
+def execute_query(
+    query,
+    params=None
+) -> Tuple[Optional[List[str]], Optional[List[Any]]]:
     """
     Execute a SQL query and return the results.
 
