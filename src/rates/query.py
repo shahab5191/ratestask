@@ -47,6 +47,7 @@ def get_rates(params: RateQueryParams):
             SELECT r.slug
             FROM regions r
             JOIN orig_sub_regions osr ON r.parent_slug = osr.slug
+            WHERE r.slug IS NOT NULL
         ),
         dest_sub_regions AS (
             SELECT slug
@@ -58,6 +59,7 @@ def get_rates(params: RateQueryParams):
             SELECT r.slug
             FROM regions r
             JOIN dest_sub_regions dsr ON r.parent_slug = dsr.slug
+            WHERE r.slug IS NOT NONE
         ),
         orig_ports AS (
             SELECT code AS slug
