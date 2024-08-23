@@ -1,4 +1,3 @@
-from datetime import datetime
 from flask import request
 from pydantic import ValidationError
 from src.config import Config
