@@ -24,8 +24,6 @@ jobs:
 
     - name: Test env
       run: |
-        echo ${{ env.DB_USER }}
-        echo ${{ env.DB_PASSWORD }}
         if [ -z "$DB_USER" ] || [ -z "$DB_PASSWORD" ]; then
           echo "ERROR: DB_USER or DB_PASSWORD is not set."
           exit 1
@@ -41,21 +39,6 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install docker-compose
-
-    - name: Build containers
-      run: |
-        echo ${{ env.DB_USER }}
-        echo ${{ env.DB_PASSWORD }}
-        make install
-      env:
-        DOCKER_BUILDKIT: 1
-        DB_USER: ${{ vars.DB_USER }}
-        DB_PASSWORD: ${{ vars.DB_PASSWORD }}
-
-    - name: View logs
-      run: |
-        docker-compose logs db
-        docker-compose logs web
 
     - name: Build and run with Docker Compose
       run: |
