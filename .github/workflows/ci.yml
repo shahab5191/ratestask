@@ -24,15 +24,15 @@ jobs:
 
     - name: Test env
       run: |
-        echo ${{ DB_USER }}
-        echo ${{ DB_PASSWORD }}
+        echo ${{ env.DB_USER }}
+        echo ${{ env.DB_PASSWORD }}
         if [ -z "$DB_USER" ] || [ -z "$DB_PASSWORD" ]; then
           echo "ERROR: DB_USER or DB_PASSWORD is not set."
           exit 1
         fi
       env:
-        DB_USER: ${{ env.DB_USER }}
-        DB_PASSWORD: ${{ env.DB_PASSWORD }}
+        DB_USER: test
+        DB_PASSWORD: test
 
     - name: Set up Docker
       uses: docker/setup-buildx-action@v2
