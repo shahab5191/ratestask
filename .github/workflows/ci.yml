@@ -24,6 +24,8 @@ jobs:
 
     - name: Test env
       run: |
+        echo ${{ DB_USER }}
+        echo ${{ DB_PASSWORD }}
         if [ -z "$DB_USER" ] || [ -z "$DB_PASSWORD" ]; then
           echo "ERROR: DB_USER or DB_PASSWORD is not set."
           exit 1
