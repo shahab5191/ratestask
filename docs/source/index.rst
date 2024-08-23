@@ -13,6 +13,7 @@ Rates Task documentation
    :caption: Contents:
 
    getting_started
+   optimization
    api_references
 
 
