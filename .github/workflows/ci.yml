@@ -30,7 +30,10 @@ jobs:
         sudo apt-get install docker-compose
 
     - name: Build containers
-      run: make install
+      run: |
+        echo ${{ env.DB_USER }}
+        echo ${{ env.DB_PASSWORD }}
+        make install
       env:
         DOCKER_BUILDKIT: 1
         DB_USER: ${{ env.DB_USER }}
