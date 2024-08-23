@@ -35,6 +35,8 @@ jobs:
         make test
       env:
         DOCKER_BUILDKIT: 1
+        DB_USER: ${{ secrets.DB_USER }}
+        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
 
     - name: Stop and remove containers
       run: |
