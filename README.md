@@ -87,9 +87,6 @@ Welcome to Rates Task! Here\'s how to get started:
 ## Technical debts
 You can read about the technical debts and current state of the project [here](technical-debt.md)
 
-Here’s your proposal in Markdown format:
-
-```markdown
 ## Proposal for Query Optimization: Leveraging Indexing and Denormalization
 You can read this part in document format [here](https://shahab5191.github.io/ratestask/optimization.html)
 
