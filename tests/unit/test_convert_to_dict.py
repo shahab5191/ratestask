@@ -1,14 +1,11 @@
 import datetime
-from typing import List, Tuple, clear_overloads
+from typing import List, Tuple
 import unittest
 
 from src.utils.convert_to_dict import convert_to_dict
 
 
 class TestConvertTotDict(unittest.TestCase):
-    def setUp(self):
-        pass
-
     def test_valid_data(self):
         colnames = ["col1", "col2", "col3", "col4"]
         rows: List[Tuple[str, ...]] = [

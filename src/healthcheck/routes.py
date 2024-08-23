@@ -3,7 +3,7 @@ from src.healthcheck import bp
 from src.utils.database_connection_check import is_db_connection_healthy
 
 
-@bp.get(f"{Config().API_PREFIX}/healthz")
+@bp.get(f"{Config.API_PREFIX}/healthz")
 def healthcheck():
     """
     Healthcheck endpoint for kubernetes (or any other depolyment).

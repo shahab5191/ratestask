@@ -7,7 +7,7 @@ from loguru import logger
 from src.rates.schema import RateQueryParams
 
 
-@bp.get(f"{Config().API_PREFIX}/rates")
+@bp.get(f"{Config.API_PREFIX}/rates")
 def rates_endpoint():
     """
     Retrieve rate data based on query parameters.
@@ -40,7 +40,7 @@ def rates_endpoint():
 
     except ValidationError as ve:
         logger.error("Error while validating query:", ve)
-        return {"error": "query parameters are not valid!"}
+        return {"error": "query parameters are not valid!"}, 400
 
     except Exception as e:
         logger.error("Error while running rates query:", e)

@@ -15,6 +15,9 @@ class TestExecuteQuery(unittest.TestCase):
         self.mock_conn.cursor.return_value.__enter__.return_value = self.mock_cursor
         self.query = "SELECT * from regions"
 
+    def tearDown(self):
+        patch.stopall()
+
     def test_execute_query_success(self):
 
         self.mock_cursor.description = [('slug',), ('name',), ('parent_slug',)]
