@@ -1,137 +1,83 @@
-# Data definition
+# Description
+This server is for [xeneta.com](https://xeneta.com) assignment ratestask
+# Getting Started
 
-We are providing you with a small set of simplified real-world data. A
-database dump is provided that includes the following information:
+Welcome to Rates Task! Here\'s how to get started:
 
-## Ports
+1.  **Install Docker**
 
-Information about ports, including:
+    Follow the Docker documentation to install Docker. You can use
+    either Docker Engine or Docker Desktop. You should also install
+    Docker Compose for building and running the database and server
+    together.
 
-* 5-character port code
-* Port name
-* Slug describing which region the port belongs to
+    [Docker Engine installation
+    document](https://docs.docker.com/engine/install/)
 
-## Regions
+2.  **Run Tests and Lint**
 
-A hierarchy of regions, including:
+    First, run Tests and Linter to make sure everything works fine.
 
-* Slug - a machine-readable form of the region name
-* The name of the region
-* Slug describing which parent region the region belongs to
+    If you are using Unix-based operating systems, you can use \`make\`:
 
-Note that a region can have both ports and regions as children, and the region
-tree does not have a fixed depth.
+    ``` bash
+    make lint
+    make tests
+    ```
 
-## Prices
+    On Windows, you can use Docker Compose:
 
-Individual daily prices between ports, in USD.
+    ``` bash
+    docker-compose run --rm web pytest
+    docker-compose down --volumes --remove-orphans
 
-* 5-character origin port code
-* 5-character destination port code
-* The day for which the price is valid
-* The price in USD
+    # AND
 
-# Assignment: HTTP-based API
+    docker-compose run --rm web flake8
+    docker-compose down --volumes --remove-orphans
+    ```
 
-Develop an [HTTP-based API](#task-1-http-based-api) capable of handling the GET request described below. Our stack is based on Flask, but you are free to choose any Python framework you like. All data returned is expected to be in JSON format. Please demonstrate your knowledge of SQL (as opposed to using ORM querying tools).
+3.  **Run Server and Database**
 
+    Then you can build Docker containers and run them.
 
-Implement an API endpoint that takes the following parameters:
+    On Unix-based systems:
 
-* date_from
-* date_to
-* origin
-* destination
+    ``` bash
+    make all
+    # or
+    make install
+    ```
 
-and returns a list with the average prices for each day on a route between port codes *origin* and *destination*. Return an empty value (JSON null) for days on which there are less than 3 prices in total.
+    On Windows:
 
-Both the *origin, destination* params accept either port codes or region slugs, making it possible to query for average prices per day between geographic groups of ports.
+    ``` bash
+    docker-compose up --build -d
+    ```
 
-    curl "http://127.0.0.1/rates?date_from=2016-01-01&date_to=2016-01-10&origin=CNSGH&destination=north_europe_main"
+4.  **Send Request**
 
-    [
-        {
-            "day": "2016-01-01",
-            "average_price": 1112
-        },
-        {
-            "day": "2016-01-02",
-            "average_price": 1112
-        },
-        {
-            "day": "2016-01-03",
-            "average_price": null
-        },
-        ...
-    ]
+    Now you can send HTTP requests to the server.
 
-# Requirements
+     **Request Example**
 
-* Write the solution using Python and SQL, you can use an ORM but please
-  demonstrate some raw SQL
+    -   **URL:** [/v1/rates](.title-ref)
 
-* Keep your solution in a Version Control System of your
-  choice. *Provide the solution as a public repository that can be
-  easily cloned by our development team.*
+    -   **METHOD:** GET
 
-* Provide any instructions needed to set up the system in `README.md`.
+    -   **PARAMS:**
 
-* Ensure the API handles errors and edge cases properly.
+        -   date_to
+        -   date_from
+        -   origin
+        -   destination
 
-* Use dates in YYYY-MM-DD format for the API. There is no need for more
-  complicated date processing.
+    -   **RESULT:**
 
-# Extra details
-
-* It usually takes 2 - 6 hours to complete this task for a developer with 2+ years of experience in building APIs with Python and SQL.
-
-* Our key evaluation criteria:
-    - Ease of setup and testing
-    - Code clarity and simplicity
-    - Comments where appropriate
-    - Code organisation
-    - Tests
-
-* You are encouraged to modify or extend the database schema if you think a different model fits the task better.
-
-* If you have any questions, please don't hesitate to contact us
-
-* Please let us know how much time you spent on the task, and of any difficulties that you ran into.
+        -   Array of average_price and
+            day ([yyyy-mm-dd])
 
 
-# Initial setup
-
-We have provided a simple Docker setup for you, which will start a
-PostgreSQL instance populated with the assignment data. You don't have
-to use it, but you might find it convenient. If you decide to use
-something else, make sure to include instructions on how to set it up.
-
-You can execute the provided Dockerfile by running:
-
-```bash
-docker build -t ratestask .
-```
-
-This will create a container with the name *ratestask*, which you can
-start in the following way:
-
-```bash
-docker run -p 0.0.0.0:5432:5432 --name ratestask ratestask
-```
-
-You can connect to the exposed Postgres instance on the Docker host IP address,
-usually *127.0.0.1* or *172.17.0.1*. It is started with the default user `postgres` and `ratestask` password.
-
-```bash
-PGPASSWORD=ratestask psql -h 127.0.0.1 -U postgres
-```
-
-alternatively, use `docker exec` if you do not have `psql` installed:
-
-```bash
-docker exec -e PGPASSWORD=ratestask -it ratestask psql -U postgres
-```
-
-Keep in mind that any data written in the Docker container will
-disappear when it shuts down. The next time you run it, it will start
-with a clean state.
+    > **_NOTE:_** When running the server, wait for a couple of seconds
+    before sending requests because it takes time for the database
+    container to get ready for receiving requests.
