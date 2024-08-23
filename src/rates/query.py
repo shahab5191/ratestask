@@ -84,16 +84,14 @@ def get_rates(params: RateQueryParams):
             AND p.day >= %(date_from)s
             GROUP BY p.day
         )
-        SELECT d.day, average_price
-        FROM price_data pd
-        RIGHT JOIN (
-            SELECT date::date AS day
-            FROM generate_series(
+        SELECT d.day, COALESCE(average_price, NULL) as average_price
+        FROM generate_series(
                 %(date_from)s::date,
                 %(date_to)s::date,
                 '1 day'::interval
-            ) AS date
-        ) d ON d.day = pd.day
+            ) AS d(day)
+        Left Join price_data pd
+        ON d.day = pd.day
         ORDER BY d.day;
     """# noqa
 
