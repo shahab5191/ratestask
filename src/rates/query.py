@@ -59,7 +59,7 @@ def get_rates(params: RateQueryParams):
             SELECT r.slug
             FROM regions r
             JOIN dest_sub_regions dsr ON r.parent_slug = dsr.slug
-            WHERE r.slug IS NOT NONE
+            WHERE r.slug IS NOT NULL
         ),
         orig_ports AS (
             SELECT code AS slug
@@ -87,7 +87,7 @@ def get_rates(params: RateQueryParams):
             GROUP BY p.day
             HAVING COUNT(p.price) > 2
         )
-        SELECT d.day, COALESCE(average_price, NULL) as average_price
+        SELECT to_char(d.day, 'yyyy-mm-dd') as day, COALESCE(average_price, NULL) as average_price
         FROM generate_series(
                 %(date_from)s::date,
                 %(date_to)s::date,

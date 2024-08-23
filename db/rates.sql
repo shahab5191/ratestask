@@ -56992,3 +56992,36 @@ DELETE FROM prices WHERE day = date'2016-01-03';
 -- Make Jan 4 have one price on CNSGH to GBFXT (grandchild of NE main)
 DELETE FROM prices WHERE day = date'2016-01-04';
 INSERT INTO prices VALUES ('CNSGH', 'GBFXT', date'2016-01-04', 100500);
+
+
+
+--
+-- Creating INDEX to make joins faster
+--
+
+CREATE INDEX idx_ports_parent_slug ON ports(parent_slug);
+CREATE INDEX idx_regions_parent_slug ON regions(parent_slug);
+CREATE INDEX idx_prices_orig_code ON prices(orig_code);
+CREATE INDEX idx_prices_dest_code ON prices(dest_code);
+CREATE INDEX idx_prices_day ON prices(day);
+CREATE INDEX idx_prices_orig_dest_day ON prices(orig_code, dest_code, day);
+
+-- ports table UNIQUE and INDEX
+
+ALTER TABLE ports
+    ADD CONSTRAINT unique_code UNIQUE (code);
+
+-- regions table UNIQUE and INDEX
+
+ALTER TABLE regions
+    ADD CONSTRAINT unique_slug UNIQUE (slug);
+
+-- Runing ANALYZE and OPTIMIZE on created indexes
+ANALYZE ports;
+ANALYZE regions;
+ANALYZE prices;
+
+REINDEX TABLE ports;
+REINDEX TABLE regions;
+REINDEX TABLE prices;
+
