@@ -1,6 +1,7 @@
 # About
 This server is designated for the [xeneta.com](https://xeneta.com) assignment "RatesTask."
 
+For more information about the API and functions, please visit the [Documentaion](https://shahab5191.github.io/ratestask).
 ## Getting Started
 
 Welcome to Rates Task! Here\'s how to get started:
