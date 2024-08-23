@@ -1,6 +1,7 @@
-# Description
-This server is for [xeneta.com](https://xeneta.com) assignment ratestask
-# Getting Started
+# About
+This server is designated for the [xeneta.com](https://xeneta.com) assignment "RatesTask."
+
+## Getting Started
 
 Welcome to Rates Task! Here\'s how to get started:
 
@@ -81,3 +82,10 @@ Welcome to Rates Task! Here\'s how to get started:
     > **_NOTE:_** When running the server, wait for a couple of seconds
     before sending requests because it takes time for the database
     container to get ready for receiving requests.
+
+## Technical debts
+You can read about the technical debts and current state of the project [here](technical-debt.md)
+
+## Author
+Shahab Oveysi
+[oveysi.shahab@gmail.com](mailto:oveysi.shahab@gmail.com)
