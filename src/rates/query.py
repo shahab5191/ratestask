@@ -72,7 +72,7 @@ def get_rates(params: RateQueryParams):
         price_data AS (
             SELECT
                 p.day,
-                (CASE WHEN COUNT(p.price) > 2 THEN round(AVG(p.price), 2) ELSE NULL END) AS average_price
+                round(AVG(p.price)) AS average_price
             FROM prices p
             JOIN ports orig ON orig.code = p.orig_code
             JOIN ports dest ON dest.code = p.dest_code
@@ -83,6 +83,7 @@ def get_rates(params: RateQueryParams):
             AND p.day <= %(date_to)s
             AND p.day >= %(date_from)s
             GROUP BY p.day
+            HAVING COUNT(p.price) > 2
         )
         SELECT d.day, COALESCE(average_price, NULL) as average_price
         FROM generate_series(
@@ -90,7 +91,7 @@ def get_rates(params: RateQueryParams):
                 %(date_to)s::date,
                 '1 day'::interval
             ) AS d(day)
-        Left Join price_data pd
+        LEFT JOIN price_data pd
         ON d.day = pd.day
         ORDER BY d.day;
     """# noqa
