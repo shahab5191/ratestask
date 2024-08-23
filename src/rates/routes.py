@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask import request
 from pydantic import ValidationError
 from src.config import Config
@@ -27,13 +28,16 @@ def rates_endpoint():
         or an error message under the "error" key.
     """ # noqa
     try:
-        query_params = RateQueryParams(
-            date_from=request.args.get("date_from"),
-            date_to=request.args.get("date_to"),
-            origin=request.args.get("origin"),
-            destination=request.args.get("destination")
-        )
-        rates = get_rates(query_params)
+        query_param_schema = RateQueryParams
+        query_params = {
+                "date_from": request.args.get("date_from"),
+                "date_to": request.args.get("date_to"),
+                "origin": request.args.get("origin"),
+                "destination": request.args.get("destination")
+        }
+        validated_params = query_param_schema.model_validate(query_params)
+
+        rates = get_rates(validated_params)
 
     except ValidationError as ve:
         logger.error("Error while validating query:", ve)
