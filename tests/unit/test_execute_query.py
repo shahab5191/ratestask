@@ -19,6 +19,7 @@ class TestExecuteQuery(unittest.TestCase):
         patch.stopall()
 
     def test_execute_query_success(self):
+        """Test successful query execution and correct result parsing."""
 
         self.mock_cursor.description = [('slug',), ('name',), ('parent_slug',)]
         self.mock_cursor.fetchall.return_value = [
@@ -36,6 +37,8 @@ class TestExecuteQuery(unittest.TestCase):
         ])
 
     def test_execute_query_exception(self):
+        """Test handling of exceptions during query execution."""
+
         self.mock_cursor.execute.side_effect = Exception("Database error:")
 
         colnames, rows = execute_query(self.query)
@@ -44,6 +47,8 @@ class TestExecuteQuery(unittest.TestCase):
         self.assertIsNone(rows)
 
     def test_execute_query_empty_result(self):
+        """Test query execution with an empty result set."""
+
         self.mock_cursor.description = [('slug',), ('name',), ('parent_name',)]
         self.mock_cursor.fetchall.return_value = []
 

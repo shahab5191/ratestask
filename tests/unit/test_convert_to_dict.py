@@ -7,6 +7,8 @@ from src.utils.convert_to_dict import convert_to_dict
 
 class TestConvertTotDict(unittest.TestCase):
     def test_valid_data(self):
+        """Test conversion of rows to dictionaries with valid column names and data."""
+
         colnames = ["col1", "col2", "col3", "col4"]
         rows: List[Tuple[str, ...]] = [
                 ("1", "2", "3", "4"),
@@ -34,6 +36,8 @@ class TestConvertTotDict(unittest.TestCase):
 
 
     def test_empty_data(self):
+        """Test conversion with empty column names and rows."""
+
         colnames = []
         rows = []
 
@@ -41,6 +45,8 @@ class TestConvertTotDict(unittest.TestCase):
         self.assertEqual(len(result), 0)
 
     def test_with_date_formatting(self):
+        """Test conversion with date formatting applied to date fields."""
+
         colnames = ["col1", "col2", "col3", "col4"]
         rows = [("1", datetime.date(2016, 2, 1), "2", "3")]
         format = "%Y-%m-%d"
@@ -56,6 +62,8 @@ class TestConvertTotDict(unittest.TestCase):
         self.assertDictEqual(result[0], expected_result)
 
     def test_with_date_without_formatting(self):
+        """Test conversion with date fields left as `datetime.date` objects without formatting."""
+
         colnames = ["col1", "col2", "col3", "col4"]
         rows = [("1", datetime.date(2016, 2, 1), "2", "3")]
         expected_result = {
