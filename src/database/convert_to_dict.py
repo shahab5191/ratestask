@@ -36,7 +36,7 @@ def convert_to_dict(
         validated_row = []
         if date_format:
             for item in row:
-                if isinstance(item, datetime.date):
+                if isinstance(item, (datetime.datetime, datetime.date)):
                     validated_row.append(item.strftime(date_format))
                 else:
                     validated_row.append(item)
