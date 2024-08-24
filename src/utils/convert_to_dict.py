@@ -1,6 +1,8 @@
 import datetime
 from typing import Any, Dict, List, Optional, Tuple
 
+from loguru import logger
+
 
 def convert_to_dict(
     colnames: Optional[List[str]],
@@ -28,7 +30,10 @@ def convert_to_dict(
                               as values. Returns an empty list if `colnames` or `rows` 
                               is `None`.
     """ # noqa
+
+    logger.debug("Converting data to dict format")
     if rows is None or colnames is None:
+        logger.debug("Either row or colnames are empty. returning empty arary")
         return []
 
     data = []

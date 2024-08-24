@@ -55,6 +55,7 @@ def execute_query(
         Exception: Any exception raised during query execution or connection handling 
                    is caught and printed, but the function does not raise it further.
     """ # noqa
+
     logger.debug("Execute query requested")
     conn = get_db_connection()
     rows = None

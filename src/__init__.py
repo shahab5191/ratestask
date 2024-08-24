@@ -36,7 +36,9 @@ def create_app(config_class=Config):
     from src.rates import bp as rate_bp
     from src.healthcheck import bp as healthcheck_bp
 
+    logger.debug("Registering rate blueprint")
     app.register_blueprint(rate_bp)
+    logger.debug("Registering healthcheck blueprint")
     app.register_blueprint(healthcheck_bp)
 
     logger.debug("Flask app created successfully!")
