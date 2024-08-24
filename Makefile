@@ -26,11 +26,11 @@ test-all: install
 # Run tests
 .PHONY: test
 test: install
-	$(DOCKER-COMPOSE) exec web $(PYTEST)
+	$(DOCKER_COMPOSE) run --rm web $(PYTEST)
 	$(MAKE) clean
 
 # Run flake8 linter
 .PHONY: lint
-lint:
+lint: install
 	$(DOCKER_COMPOSE) run --rm web $(FLAKE8)
 	$(MAKE) clean
