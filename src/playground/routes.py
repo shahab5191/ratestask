@@ -21,7 +21,11 @@ def playground():
             validated_inputs = input_schema.model_validate(params)
             rates = get_rates(validated_inputs)
 
-            return render_template('rates.html', table_data=rates, form_data=params)
+            return render_template(
+                'rates.html',
+                table_data=rates,
+                form_data=params
+            )
         except ValidationError as ve:
             logger.warning("Input validation error:", ve)
         except Exception as e:
