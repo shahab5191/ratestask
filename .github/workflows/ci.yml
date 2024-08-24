@@ -42,7 +42,7 @@ jobs:
 
     - name: Build and run with Docker Compose
       run: |
-        make test-all
+        make test
       env:
         DOCKER_BUILDKIT: 1
         DB_USER: ${{ vars.DB_USER }}
