@@ -16,6 +16,13 @@ install:
 clean:
 	$(DOCKER_COMPOSE) down --volumes --remove-orphans
 
+# Check code quality
+.PHONY:
+test-all: install
+	$(DOCKER_COMPOSE) run --rm web $(PYTEST)
+	$(DOCKER_COMPOSE) run --rm web $(FLAKE8)
+	$(MAKE) clean
+
 # Run tests
 .PHONY: test
 test: install

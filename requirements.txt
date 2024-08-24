@@ -1,4 +1,4 @@
-alabaster==1.0.0
+alabaster==0.7.16
 annotated-types==0.7.0
 babel==2.16.0
 blinker==1.8.2
@@ -8,7 +8,7 @@ charset-normalizer==3.3.2
 click==8.1.7
 coverage==7.6.1
 distlib==0.3.8
-docutils==0.21.2
+docutils==0.20.1
 filelock==3.15.4
 flake8==7.1.1
 Flask==3.0.3
@@ -39,11 +39,13 @@ python-dotenv==1.0.1
 PyYAML==6.0.2
 requests==2.32.3
 snowballstemmer==2.2.0
-Sphinx==8.0.2
+Sphinx==7.4.7
 sphinx-autodoc-typehints==2.2.3
+sphinx-rtd-theme==2.0.0
 sphinxcontrib-applehelp==2.0.0
 sphinxcontrib-devhelp==2.0.0
 sphinxcontrib-htmlhelp==2.1.0
+sphinxcontrib-jquery==4.1
 sphinxcontrib-jsmath==1.0.1
 sphinxcontrib-qthelp==2.0.0
 sphinxcontrib-serializinghtml==2.0.0

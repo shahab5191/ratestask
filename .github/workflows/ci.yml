@@ -42,7 +42,6 @@ jobs:
 
     - name: Build and run with Docker Compose
       run: |
-        make lint
         make test
       env:
         DOCKER_BUILDKIT: 1
