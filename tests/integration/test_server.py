@@ -18,11 +18,16 @@ def wait_for_database(client, max_retries=5, delay=5):
             if response.status_code == 200:
                 return
         except Exception:
-            print(f"Exeption happend trying to connect to database, retrying...")
+            print(
+                "Exeption happend trying to connect to database, retrying..."
+            )
 
-        print(f"Database not ready, retrying in {delay} seconds...")
+        print(
+            f"Database not ready, retrying in {delay} seconds..."
+        )
         time.sleep(delay)
     raise Exception("Database not ready after waiting")
+
 
 def test_server_is_running(client):
     wait_for_database(client)
