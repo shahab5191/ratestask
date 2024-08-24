@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Rates Task Playground</title>
+        <link
+            href="{{ url_for('static', filename='style.css') }}"
+            rel="stylesheet"
+        />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+            rel="stylesheet"
+        />
+    </head>
+    <body>
+        <div class="main-container">
+            <div class="result-container">
+                <form method="post" class="input-form">
+                    <div class="header-box">
+                        <h1>Rates Task Playground</h1>
+                        <div class="author">
+                            <h2>Author</h2>
+                            <p><span>Name</span><span>Shahab Oveysi</span></p>
+                            <p><span>Email</span><span>oveysi.shahab@gmail.com</span></p>
+                        </div>
+                    </div>
+                    <div class="input-section">
+                        <div class="input-container">
+                            <label for="orig">Origin</label>
+                            <input
+                                type="text"
+                                id="orig"
+                                name="origin"
+                                value="{{ form_data.origin }}"
+                                required
+                            />
+                        </div>
+                        <div class="input-container">
+                            <label for="dest">Destination</label>
+                            <input
+                                type="text"
+                                id="dest"
+                                name="destination"
+                                value="{{ form_data.destination }}"
+                                required
+                            />
+                        </div>
+                        <div class="input-container">
+                            <label for="date_from">From</label>
+                            <input
+                                type="date"
+                                id="date_from"
+                                name="date_from"
+                                value="{{ form_data.date_from }}"
+                                required
+                            />
+                        </div>
+                        <div class="input-container">
+                            <label for="date_to">To</label>
+                            <input
+                                type="date"
+                                id="date_to"
+                                name="date_to"
+                                value="{{ form_data.date_to }}"
+                                required
+                            />
+                        </div>
+                        <button type="submit">Submit</button>
+                    </div>
+                </form>
+                <div class="table-container">
+                    <div class="columnes">
+                        <div>Date</div>
+                        <div>Average Price</div>
+                    </div>
+                    <div class="table-inner-container">
+                        {% for row in table_data %}
+                        <div class="rows">
+                            <div>{{ row.day }}</div>
+                            <div>$ {{ row.average_price }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

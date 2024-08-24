@@ -84,6 +84,12 @@ Welcome to Rates Task! Here\'s how to get started:
     before sending requests because it takes time for the database
     container to get ready for receiving requests.
 
+## Playground
+
+After running server you can go to [localhost:5000](http://localhost:5000/playground) to test the server or you can start calling API on `http://localhost:5000/api/rates`
+
+![Playground for ratestask api](Playground.webp)
+
 ## Technical debts
 You can read about the technical debts and current state of the project [here](technical-debt.md)
 
