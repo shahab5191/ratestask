@@ -7,9 +7,11 @@ PYTEST = pytest
 all: install
 
 # Build and run containers
-.PHONY: install
+.PHONY:
 install:
+	@echo "Starting the server ..."
 	$(DOCKER_COMPOSE) up --build -d
+	@echo "Server is ready, go to http://localhost:5000/playground"
 
 # Remove containers and clean up
 .PHONY: clean
