@@ -6,6 +6,9 @@ from src.config import Config
 
 
 def configure_logging(app: Flask):
+    if app.config.get("ENV") == "TESTING":
+        return
+
     app.logger.removeHandler(app.logger.handlers[0])
 
     environment = Config.ENV
