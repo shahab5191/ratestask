@@ -16,9 +16,33 @@ Welcome to Rates Task! Here\'s how to get started:
     [Docker Engine installation
     document](https://docs.docker.com/engine/install/)
 
+2. **Clone Repository**
+    First clone this repository:
+
+    ```bash
+    git clone https://github.com/shahab5191/ratestask
+    ```
+3. **Set Environment Variables**
+    You can either create `.env` file like `.env-example` file.
+
+    Or set environment variables in your terminal.
+
+    On linux you can use this command:
+    
+    ```bash
+    export DB_USER="username for database"
+    export DB_PASSWORD="password for database"
+    ```
+
+    Or on windows:
+    ```powershell
+    $env:DB_USER = "username for database"
+    $env:DB_PASSWORD = "password for database"
+    ```
+
 2.  **Run Tests and Lint**
 
-    First, run Tests and Linter to make sure everything works fine.
+    run Tests and Linter to make sure everything works fine.
 
     If you are using Unix-based operating systems, you can use \`make\`:
 
