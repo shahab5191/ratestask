@@ -75,7 +75,7 @@ def get_rates(params: RateQueryParams):
         price_data AS (
             SELECT
                 p.day,
-                round(AVG(p.price)) AS average_price
+                round(AVG(p.price), 2) AS average_price
             FROM prices p
             JOIN ports orig ON orig.code = p.orig_code
             JOIN ports dest ON dest.code = p.dest_code
