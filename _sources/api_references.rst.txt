@@ -31,7 +31,18 @@ Database
 
 Utility
 =======
+
 .. automodule:: src.utils.convert_to_dict
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: src.utils.retry_decorator
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: src.utils.config_logging
     :members:
     :undoc-members:
     :show-inheritance:

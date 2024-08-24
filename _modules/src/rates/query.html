@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>src.rates.query &mdash; Rates Task  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Rates Task
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started.html#indices-and-tables">Indices and tables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../optimization.html">Proposal for Query Optimization: Leveraging Indexing and Denormalization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_references.html">SERVER API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_references.html#rate-endpoint">Rate Endpoint</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_references.html#module-src.database.connection">Database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_references.html#module-src.utils.convert_to_dict">Utility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_references.html#module-src.healthcheck.routes">Health Check</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Rates Task</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../../src.html">src</a></li>
+      <li class="breadcrumb-item active">src.rates.query</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for src.rates.query</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span> <span class="nn">src.database.connection</span> <span class="kn">import</span> <span class="n">execute_query</span>
+<span class="kn">from</span> <span class="nn">src.utils.convert_to_dict</span> <span class="kn">import</span> <span class="n">convert_to_dict</span>
+<span class="kn">from</span> <span class="nn">src.rates.schema</span> <span class="kn">import</span> <span class="n">RateQueryParams</span>
+
+
+<div class="viewcode-block" id="get_rates">
+<a class="viewcode-back" href="../../../api_references.html#src.rates.query.get_rates">[docs]</a>
+<span class="k">def</span> <span class="nf">get_rates</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="n">RateQueryParams</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieve rate data based on the provided query parameters.</span>
+
+<span class="sd">    This function executes a complex SQL query to fetch the average price of rates </span>
+<span class="sd">    between specified origin and destination regions or ports within a given date range. </span>
+<span class="sd">    The query uses Common Table Expressions (CTEs) to recursively obtain sub-regions </span>
+<span class="sd">    for both origin and destination, and then aggregates price data from the `prices` table. </span>
+<span class="sd">    The results are returned as a list of daily average prices.</span>
+
+<span class="sd">    The SQL query performs the following steps:</span>
+<span class="sd">        1. `orig_sub_regions`: Recursively fetches all sub-regions of the origin region.</span>
+<span class="sd">        2. `dest_sub_regions`: Recursively fetches all sub-regions of the destination region.</span>
+<span class="sd">        3. `orig_ports`: Fetches the port codes for the origin.</span>
+<span class="sd">        4. `dest_ports`: Fetches the port codes for the destination.</span>
+<span class="sd">        5. `price_data`: Aggregates price data, calculating the average price per day, </span>
+<span class="sd">           if there are more than two prices available.</span>
+<span class="sd">        6. Combines and orders the results by day.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        params (RateQueryParams): An instance of `RateQueryParams` containing:</span>
+<span class="sd">            - `date_from` (str): The start date for filtering prices (format: YYYY-MM-DD).</span>
+<span class="sd">            - `date_to` (str): The end date for filtering prices (format: YYYY-MM-DD).</span>
+<span class="sd">            - `origin` (str): The origin location code.</span>
+<span class="sd">            - `destination` (str): The destination location code.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        List[dict]: A list of dictionaries where each dictionary represents a day and contains:</span>
+<span class="sd">            - `day` (str): The date.</span>
+<span class="sd">            - `average_price` (float or None): The average price for that day, or `None` if </span>
+<span class="sd">              there are fewer than two prices available for that day.</span>
+<span class="sd">    &quot;&quot;&quot;</span> <span class="c1"># noqa</span>
+
+    <span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        WITH RECURSIVE orig_sub_regions AS (</span>
+<span class="s2">            SELECT slug</span>
+<span class="s2">            FROM regions</span>
+<span class="s2">            WHERE slug = </span><span class="si">%(origin)s</span>
+
+<span class="s2">            UNION ALL</span>
+
+<span class="s2">            SELECT r.slug</span>
+<span class="s2">            FROM regions r</span>
+<span class="s2">            JOIN orig_sub_regions osr ON r.parent_slug = osr.slug</span>
+<span class="s2">            WHERE r.slug IS NOT NULL</span>
+<span class="s2">        ),</span>
+<span class="s2">        dest_sub_regions AS (</span>
+<span class="s2">            SELECT slug</span>
+<span class="s2">            FROM regions</span>
+<span class="s2">            WHERE slug = </span><span class="si">%(destination)s</span>
+
+<span class="s2">            UNION ALL</span>
+
+<span class="s2">            SELECT r.slug</span>
+<span class="s2">            FROM regions r</span>
+<span class="s2">            JOIN dest_sub_regions dsr ON r.parent_slug = dsr.slug</span>
+<span class="s2">            WHERE r.slug IS NOT NULL</span>
+<span class="s2">        ),</span>
+<span class="s2">        orig_ports AS (</span>
+<span class="s2">            SELECT code AS slug</span>
+<span class="s2">            FROM ports</span>
+<span class="s2">            WHERE ports.code = </span><span class="si">%(origin)s</span>
+<span class="s2">        ),</span>
+<span class="s2">        dest_ports AS (</span>
+<span class="s2">            SELECT code AS slug</span>
+<span class="s2">            FROM ports</span>
+<span class="s2">            WHERE ports.code = </span><span class="si">%(destination)s</span>
+<span class="s2">        ),</span>
+<span class="s2">        price_data AS (</span>
+<span class="s2">            SELECT</span>
+<span class="s2">                p.day,</span>
+<span class="s2">                round(AVG(p.price), 2) AS average_price</span>
+<span class="s2">            FROM prices p</span>
+<span class="s2">            JOIN ports orig ON orig.code = p.orig_code</span>
+<span class="s2">            JOIN ports dest ON dest.code = p.dest_code</span>
+<span class="s2">            WHERE (orig.parent_slug IN (SELECT * FROM orig_sub_regions)</span>
+<span class="s2">                    OR orig.code IN (SELECT * FROM orig_ports))</span>
+<span class="s2">            AND (dest.parent_slug IN (SELECT * FROM dest_sub_regions)</span>
+<span class="s2">                OR dest.code IN (SELECT * FROM dest_ports))</span>
+<span class="s2">            AND p.day &lt;= </span><span class="si">%(date_to)s</span>
+<span class="s2">            AND p.day &gt;= </span><span class="si">%(date_from)s</span>
+<span class="s2">            GROUP BY p.day</span>
+<span class="s2">            HAVING COUNT(p.price) &gt; 2</span>
+<span class="s2">        )</span>
+<span class="s2">        SELECT to_char(d.day, &#39;yyyy-mm-dd&#39;) as day, COALESCE(average_price, NULL) as average_price</span>
+<span class="s2">        FROM generate_series(</span>
+<span class="s2">                </span><span class="si">%(date_from)s</span><span class="s2">::date,</span>
+<span class="s2">                </span><span class="si">%(date_to)s</span><span class="s2">::date,</span>
+<span class="s2">                &#39;1 day&#39;::interval</span>
+<span class="s2">            ) AS d(day)</span>
+<span class="s2">        LEFT JOIN price_data pd</span>
+<span class="s2">        ON d.day = pd.day</span>
+<span class="s2">        ORDER BY d.day;</span>
+<span class="s2">    &quot;&quot;&quot;</span><span class="c1"># noqa</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Sending query for execution&quot;</span><span class="p">)</span>
+    <span class="n">colnames</span><span class="p">,</span> <span class="n">rows</span> <span class="o">=</span> <span class="n">execute_query</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">params</span><span class="o">.</span><span class="n">model_dump</span><span class="p">())</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Query result returned&quot;</span><span class="p">)</span>
+
+    <span class="n">rates</span> <span class="o">=</span> <span class="n">convert_to_dict</span><span class="p">(</span><span class="n">colnames</span><span class="p">,</span> <span class="n">rows</span><span class="p">,</span> <span class="n">date_format</span><span class="o">=</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Returning converted rates result&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">rates</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Shahab Oveysi.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

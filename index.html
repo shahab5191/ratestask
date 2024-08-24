@@ -50,9 +50,9 @@
 <li class="toctree-l1"><a class="reference internal" href="optimization.html">Proposal for Query Optimization: Leveraging Indexing and Denormalization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_references.html">SERVER API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_references.html#rate-endpoint">Rate Endpoint</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api_references.html#database">Database</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api_references.html#utility">Utility</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api_references.html#health-check">Health Check</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_references.html#module-src.database.connection">Database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_references.html#module-src.utils.convert_to_dict">Utility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_references.html#module-src.healthcheck.routes">Health Check</a></li>
 </ul>
 
         </div>
@@ -97,15 +97,30 @@
 <li class="toctree-l2"><a class="reference internal" href="optimization.html#conclusion">Conclusion</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="api_references.html">SERVER API</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api_references.html#rate-endpoint">Rate Endpoint</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="api_references.html#route">Route</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api_references.html#query-module">Query Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_references.html">SERVER API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api_references.html#src.app"><code class="docutils literal notranslate"><span class="pre">app</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_references.html#src.create_app"><code class="docutils literal notranslate"><span class="pre">create_app()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="api_references.html#database">Database</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api_references.html#utility">Utility</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api_references.html#health-check">Health Check</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_references.html#rate-endpoint">Rate Endpoint</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api_references.html#module-src.rates.routes">Route</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_references.html#module-src.rates.query">Query Module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api_references.html#module-src.database.connection">Database</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api_references.html#src.database.connection.execute_query"><code class="docutils literal notranslate"><span class="pre">execute_query()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api_references.html#module-src.utils.convert_to_dict">Utility</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api_references.html#src.utils.convert_to_dict.convert_to_dict"><code class="docutils literal notranslate"><span class="pre">convert_to_dict()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_references.html#src.utils.retry_decorator.retry"><code class="docutils literal notranslate"><span class="pre">retry()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_references.html#src.utils.config_logging.configure_logging"><code class="docutils literal notranslate"><span class="pre">configure_logging()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api_references.html#module-src.healthcheck.routes">Health Check</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api_references.html#src.healthcheck.routes.healthcheck"><code class="docutils literal notranslate"><span class="pre">healthcheck()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </div>
 </section>

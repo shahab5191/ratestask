@@ -51,9 +51,9 @@
 <li class="toctree-l1"><a class="reference internal" href="optimization.html">Proposal for Query Optimization: Leveraging Indexing and Denormalization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_references.html">SERVER API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_references.html#rate-endpoint">Rate Endpoint</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api_references.html#database">Database</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api_references.html#utility">Utility</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api_references.html#health-check">Health Check</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_references.html#module-src.database.connection">Database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_references.html#module-src.utils.convert_to_dict">Utility</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_references.html#module-src.healthcheck.routes">Health Check</a></li>
 </ul>
 
         </div>
@@ -88,6 +88,26 @@
 <p>Follow the Docker documentation to install Docker. You can use either Docker Engine or Docker Desktop.
 You should also install Docker Compose for building and running the database and server together.</p>
 <p><a class="reference external" href="https://docs.docker.com/engine/install/">Docker Engine installation document</a></p>
+</li>
+<li><p><strong>Clone Repository</strong>
+First clone this repository:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/shahab5191/ratestask
+</pre></div>
+</div>
+</li>
+<li><p><strong>Set Environment Variables</strong>
+You can either create <cite>.env</cite> file like <cite>.env-example</cite> file.</p>
+<p>Or set environment variables in your terminal.</p>
+<p>On linux you can use this command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">DB_USER</span><span class="o">=</span><span class="s2">&quot;username for database&quot;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">DB_PASSWORD</span><span class="o">=</span><span class="s2">&quot;password for database&quot;</span>
+</pre></div>
+</div>
+<p>Or on windows:</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$env:DB_USER</span> <span class="p">=</span> <span class="s2">&quot;username for database&quot;</span>
+<span class="nv">$env:DB_PASSWORD</span> <span class="p">=</span> <span class="s2">&quot;password for database&quot;</span>
+</pre></div>
+</div>
 </li>
 <li><p><strong>Run Tests and Lint</strong></p>
 <p>First, run Tests and Linter to make sure everything works fine.</p>

@@ -48,15 +48,36 @@
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html#indices-and-tables">Indices and tables</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimization.html">Proposal for Query Optimization: Leveraging Indexing and Denormalization</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">SERVER API</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#rate-endpoint">Rate Endpoint</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#route">Route</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#query-module">Query Module</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">SERVER API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#src.app"><code class="docutils literal notranslate"><span class="pre">app</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#src.create_app"><code class="docutils literal notranslate"><span class="pre">create_app()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="#database">Database</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#utility">Utility</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#health-check">Health Check</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#rate-endpoint">Rate Endpoint</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-src.rates.routes">Route</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#src.rates.routes.rates_endpoint"><code class="docutils literal notranslate"><span class="pre">rates_endpoint()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-src.rates.query">Query Module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#src.rates.query.get_rates"><code class="docutils literal notranslate"><span class="pre">get_rates()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#module-src.database.connection">Database</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#src.database.connection.execute_query"><code class="docutils literal notranslate"><span class="pre">execute_query()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#module-src.utils.convert_to_dict">Utility</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#src.utils.convert_to_dict.convert_to_dict"><code class="docutils literal notranslate"><span class="pre">convert_to_dict()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#src.utils.retry_decorator.retry"><code class="docutils literal notranslate"><span class="pre">retry()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#src.utils.config_logging.configure_logging"><code class="docutils literal notranslate"><span class="pre">configure_logging()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#module-src.healthcheck.routes">Health Check</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#src.healthcheck.routes.healthcheck"><code class="docutils literal notranslate"><span class="pre">healthcheck()</span></code></a></li>
+</ul>
+</li>
 </ul>
 
         </div>
@@ -83,26 +104,274 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="server-api">
-<h1>SERVER API<a class="headerlink" href="#server-api" title="Link to this heading"></a></h1>
+  <section id="module-src">
+<span id="server-api"></span><h1>SERVER API<a class="headerlink" href="#module-src" title="Link to this heading"></a></h1>
+<dl class="py data">
+<dt class="sig sig-object py" id="src.app">
+<span class="sig-prename descclassname"><span class="pre">src.</span></span><span class="sig-name descname"><span class="pre">app</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Flask</span></em><a class="headerlink" href="#src.app" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.create_app">
+<span class="sig-prename descclassname"><span class="pre">src.</span></span><span class="sig-name descname"><span class="pre">create_app</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_class=&lt;class</span> <span class="pre">'src.config.Config'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src.html#create_app"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.create_app" title="Link to this definition"></a></dt>
+<dd><p>Create and configure the Flask application.</p>
+<p>This function initializes a Flask application with the provided configuration
+class, sets up Cross-Origin Resource Sharing (CORS), and registers blueprints
+for different parts of the application.</p>
+<p>The following blueprints are registered:
+- <cite>rate_bp</cite>: Handles endpoints related to rates (imported from <cite>src.rates</cite>).
+- <cite>healthcheck_bp</cite>: Handles endpoints for health checks (imported from <cite>src.healthcheck</cite>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config_class</strong> (<em>class</em><em>, </em><em>optional</em>) – The configuration class to use for the Flask</p></li>
+<li><p><strong>Config.</strong> (<em>app. Defaults to</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The initialized Flask application instance.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Flask</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 <section id="rate-endpoint">
 <h1>Rate Endpoint<a class="headerlink" href="#rate-endpoint" title="Link to this heading"></a></h1>
-<section id="route">
-<h2>Route<a class="headerlink" href="#route" title="Link to this heading"></a></h2>
+<section id="module-src.rates.routes">
+<span id="route"></span><h2>Route<a class="headerlink" href="#module-src.rates.routes" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.rates.routes.rates_endpoint">
+<span class="sig-prename descclassname"><span class="pre">src.rates.routes.</span></span><span class="sig-name descname"><span class="pre">rates_endpoint</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/rates/routes.html#rates_endpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.rates.routes.rates_endpoint" title="Link to this definition"></a></dt>
+<dd><p>Retrieve rate data based on query parameters.</p>
+<p>This endpoint retrieves rate information filtered by the provided query parameters:
+- <cite>date_from</cite> (str): Start date for filtering the rates (format: YYYY-MM-DD).
+- <cite>date_to</cite> (str): End date for filtering the rates (format: YYYY-MM-DD).
+- <cite>origin</cite> (str): Origin location code for filtering the rates.
+- <cite>destination</cite> (str): Destination location code for filtering the rates.</p>
+<p>The function processes these parameters, validates them, and fetches the corresponding
+rates from the data source. In case of validation errors, an error message is returned.
+For other exceptions, an internal server error is returned.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A JSON object containing either the rate data under the “rates” key
+or an error message under the “error” key.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
-<section id="query-module">
-<h2>Query Module<a class="headerlink" href="#query-module" title="Link to this heading"></a></h2>
+<section id="module-src.rates.query">
+<span id="query-module"></span><h2>Query Module<a class="headerlink" href="#module-src.rates.query" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.rates.query.get_rates">
+<span class="sig-prename descclassname"><span class="pre">src.rates.query.</span></span><span class="sig-name descname"><span class="pre">get_rates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">RateQueryParams</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/rates/query.html#get_rates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.rates.query.get_rates" title="Link to this definition"></a></dt>
+<dd><p>Retrieve rate data based on the provided query parameters.</p>
+<p>This function executes a complex SQL query to fetch the average price of rates
+between specified origin and destination regions or ports within a given date range.
+The query uses Common Table Expressions (CTEs) to recursively obtain sub-regions
+for both origin and destination, and then aggregates price data from the <cite>prices</cite> table.
+The results are returned as a list of daily average prices.</p>
+<dl class="simple">
+<dt>The SQL query performs the following steps:</dt><dd><ol class="arabic simple">
+<li><p><cite>orig_sub_regions</cite>: Recursively fetches all sub-regions of the origin region.</p></li>
+<li><p><cite>dest_sub_regions</cite>: Recursively fetches all sub-regions of the destination region.</p></li>
+<li><p><cite>orig_ports</cite>: Fetches the port codes for the origin.</p></li>
+<li><p><cite>dest_ports</cite>: Fetches the port codes for the destination.</p></li>
+<li><p><cite>price_data</cite>: Aggregates price data, calculating the average price per day,
+if there are more than two prices available.</p></li>
+<li><p>Combines and orders the results by day.</p></li>
+</ol>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>params</strong> (<em>RateQueryParams</em>) – An instance of <cite>RateQueryParams</cite> containing:
+- <cite>date_from</cite> (str): The start date for filtering prices (format: YYYY-MM-DD).
+- <cite>date_to</cite> (str): The end date for filtering prices (format: YYYY-MM-DD).
+- <cite>origin</cite> (str): The origin location code.
+- <cite>destination</cite> (str): The destination location code.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>A list of dictionaries where each dictionary represents a day and contains:</dt><dd><ul class="simple">
+<li><p><cite>day</cite> (str): The date.</p></li>
+<li><p><cite>average_price</cite> (float or None): The average price for that day, or <cite>None</cite> if
+there are fewer than two prices available for that day.</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[dict]</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 </section>
-<section id="database">
-<h1>Database<a class="headerlink" href="#database" title="Link to this heading"></a></h1>
+<section id="module-src.database.connection">
+<span id="database"></span><h1>Database<a class="headerlink" href="#module-src.database.connection" title="Link to this heading"></a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.database.connection.execute_query">
+<span class="sig-prename descclassname"><span class="pre">src.database.connection.</span></span><span class="sig-name descname"><span class="pre">execute_query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/src/database/connection.html#execute_query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.database.connection.execute_query" title="Link to this definition"></a></dt>
+<dd><p>Execute a SQL query and return the results.</p>
+<p>This function establishes a connection to the database, executes the provided SQL
+query with optional parameters, and fetches the results. It returns both the column
+names and the rows of the result set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>query</strong> (<em>str</em>) – The SQL query to be executed.</p></li>
+<li><p><strong>params</strong> (<em>tuple</em><em>, </em><em>list</em><em>, or </em><em>None</em>) – Optional parameters to be used with the query.
+Defaults to None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>A tuple containing two elements:</dt><dd><ul class="simple">
+<li><p>A list of column names (<cite>list</cite> of <cite>str</cite>).</p></li>
+<li><p>A list of rows (<cite>list</cite> of <cite>tuple</cite>), where each row is a tuple of column values.</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Exception</strong> – Any exception raised during query execution or connection handling
+    is caught and printed, but the function does not raise it further.</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
-<section id="utility">
-<h1>Utility<a class="headerlink" href="#utility" title="Link to this heading"></a></h1>
+<section id="module-src.utils.convert_to_dict">
+<span id="utility"></span><h1>Utility<a class="headerlink" href="#module-src.utils.convert_to_dict" title="Link to this heading"></a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.utils.convert_to_dict.convert_to_dict">
+<span class="sig-prename descclassname"><span class="pre">src.utils.convert_to_dict.</span></span><span class="sig-name descname"><span class="pre">convert_to_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">colnames</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rows</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_format</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/src/utils/convert_to_dict.html#convert_to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.utils.convert_to_dict.convert_to_dict" title="Link to this definition"></a></dt>
+<dd><p>Convert database query results into a list of dictionaries.</p>
+<p>This function transforms the result of a database query, where <cite>colnames</cite> represent
+the column names and <cite>rows</cite> represent the data rows, into a list of dictionaries.
+Each dictionary maps column names to their corresponding values in each row.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>colnames</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>str</em><em>]</em><em>]</em>) – A list of column names. If <cite>None</cite>, no conversion
+is performed.</p></li>
+<li><p><strong>rows</strong> (<em>Optional</em><em>[</em><em>Tuple</em><em>[</em><em>str</em><em>]</em><em>]</em>) – A tuple of rows, where each row is a tuple of column
+values. If <cite>None</cite>, no conversion is performed.</p></li>
+<li><p><strong>date_format</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – An string containing formatting for date objects
+returned from database. if None, it will not format dates</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>A list of dictionaries, where each dictionary represents</dt><dd><p>a row of data with column names as keys and row values
+as values. Returns an empty list if <cite>colnames</cite> or <cite>rows</cite>
+is <cite>None</cite>.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[Dict[str, str]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function" id="module-src.utils.retry_decorator">
+<dt class="sig sig-object py" id="src.utils.retry_decorator.retry">
+<span class="sig-prename descclassname"><span class="pre">src.utils.retry_decorator.</span></span><span class="sig-name descname"><span class="pre">retry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/utils/retry_decorator.html#retry"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.utils.retry_decorator.retry" title="Link to this definition"></a></dt>
+<dd><p>A decorator to retry a function multiple times if it raises an exception.</p>
+<p>This decorator retries the execution of the decorated function up to a maximum number of attempts
+specified by <cite>Config.RETRY_MAX</cite>. If an exception is raised during the execution, it logs the error
+and retries after a delay specified by <cite>Config.RETRY_DELAY</cite>. If all attempts fail, it raises an
+exception indicating that the function could not be executed successfully.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>func</strong> (<em>Callable</em>) – The function to be decorated and retried.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The decorated function with retry logic.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Callable</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Exception</strong> – If the function fails to execute successfully after the maximum number of retries.</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<p>&#64;retry
+def connect_to_database():</p>
+<blockquote>
+<div><p># Function implementation here</p>
+</div></blockquote>
+<p>connect_to_database()</p>
+</dd></dl>
+
+<dl class="py function" id="module-src.utils.config_logging">
+<dt class="sig sig-object py" id="src.utils.config_logging.configure_logging">
+<span class="sig-prename descclassname"><span class="pre">src.utils.config_logging.</span></span><span class="sig-name descname"><span class="pre">configure_logging</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Flask</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/utils/config_logging.html#configure_logging"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.utils.config_logging.configure_logging" title="Link to this definition"></a></dt>
+<dd><p>Configures logging for the given Flask application.</p>
+<p>This function sets up logging based on the application’s environment and configuration.
+It adjusts the logging behavior according to whether the environment is “production” or not,
+and adds an <cite>InterceptHandler</cite> to route logs from Flask’s logger to the application’s logger.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>app</strong> (<em>Flask</em>) – The Flask application instance to configure logging for.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>If the application’s environment is set to “TESTING”, logging configuration is bypassed.</p></li>
+<li><p>In a “production” environment, logs are written to <cite>logs/production.log</cite> with a
+<cite>WARNING</cite> level and rotate every 10 MB with retention for 10 days.</p></li>
+<li><p>In other environments, logs are written to <cite>logs/debug.log</cite> with a <cite>DEBUG</cite> level and
+similar rotation and retention settings.</p></li>
+<li><p>All error logs are written to <cite>logs/errors.log</cite> with an <cite>ERROR</cite> level and similar
+rotation and retention settings.</p></li>
+</ul>
+<p class="rubric">Example</p>
+<p>app = Flask(__name__)
+configure_logging(app)</p>
+</dd></dl>
+
 </section>
-<section id="health-check">
-<h1>Health Check<a class="headerlink" href="#health-check" title="Link to this heading"></a></h1>
+<section id="module-src.healthcheck.routes">
+<span id="health-check"></span><h1>Health Check<a class="headerlink" href="#module-src.healthcheck.routes" title="Link to this heading"></a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.healthcheck.routes.healthcheck">
+<span class="sig-prename descclassname"><span class="pre">src.healthcheck.routes.</span></span><span class="sig-name descname"><span class="pre">healthcheck</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/healthcheck/routes.html#healthcheck"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.healthcheck.routes.healthcheck" title="Link to this definition"></a></dt>
+<dd><p>Healthcheck endpoint for kubernetes (or any other depolyment).
+Returns a JSON response indicating the health status of the application.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p>‘healthy’: If the application is healthy.</p></li>
+<li><p>’unhealthy’: If the application is unhealthy</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>JSON response with a status field</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
 
