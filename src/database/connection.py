@@ -1,15 +1,18 @@
 import os
 from typing import Any, List, Optional, Tuple
+from loguru import logger
 import psycopg2
 from dotenv import load_dotenv
 
 from src.config import Config
+from src.utils.retry_decorator import retry
 
 
 basedir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 load_dotenv(os.path.join(basedir, '.env'))
 
 
+@retry
 def get_db_connection():
     """
     Establish and return a connection to the database.
@@ -21,7 +24,9 @@ def get_db_connection():
     Returns:
         psycopg2.connection: A connection object to the PostgreSQL database.
     """ # noqa
+    logger.debug("Creating new database connection...")
     conn = psycopg2.connect(**Config().DATABASE_CONFIG)
+    logger.debug("Database connection created")
     return conn
 
 
@@ -50,18 +55,25 @@ def execute_query(
         Exception: Any exception raised during query execution or connection handling 
                    is caught and printed, but the function does not raise it further.
     """ # noqa
+
+    logger.debug("Execute query requested")
     conn = get_db_connection()
     rows = None
     colnames = None
     try:
+        logger.debug("Executing query...")
         with conn.cursor() as cur:
             cur.execute(query, params)
 
             if cur.description:
                 rows = cur.fetchall()
                 colnames = [desc[0] for desc in cur.description]
+            else:
+                logger.warning("No description found in query result")
     except Exception as e:
-        print(f"Database error: {e}")
+        logger.error(f"Database error: {e}")
     finally:
+        logger.debug("Closing database connection")
         conn.close()
+        logger.debug("Connection closed successfully")
     return colnames, rows

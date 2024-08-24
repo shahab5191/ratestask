@@ -3,6 +3,8 @@ from src.config import Config
 from flask_cors import CORS
 from loguru import logger
 
+from src.utils.config_logging import configure_logging
+
 
 app: Flask
 
@@ -32,11 +34,14 @@ def create_app(config_class=Config):
     app = Flask(__name__)
     CORS(app)
     app.config.from_object(config_class)
+    configure_logging(app)
 
     from src.rates import bp as rate_bp
     from src.healthcheck import bp as healthcheck_bp
 
+    logger.debug("Registering rate blueprint")
     app.register_blueprint(rate_bp)
+    logger.debug("Registering healthcheck blueprint")
     app.register_blueprint(healthcheck_bp)
 
     logger.debug("Flask app created successfully!")

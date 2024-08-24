@@ -1,3 +1,4 @@
+from loguru import logger
 from src.database.connection import execute_query
 from src.utils.convert_to_dict import convert_to_dict
 from src.rates.schema import RateQueryParams
@@ -74,7 +75,7 @@ def get_rates(params: RateQueryParams):
         price_data AS (
             SELECT
                 p.day,
-                round(AVG(p.price)) AS average_price
+                round(AVG(p.price), 2) AS average_price
             FROM prices p
             JOIN ports orig ON orig.code = p.orig_code
             JOIN ports dest ON dest.code = p.dest_code
@@ -98,7 +99,10 @@ def get_rates(params: RateQueryParams):
         ORDER BY d.day;
     """# noqa
 
+    logger.debug("Sending query for execution")
     colnames, rows = execute_query(query, params.model_dump())
+    logger.debug("Query result returned")
 
     rates = convert_to_dict(colnames, rows, date_format="%Y-%m-%d")
+    logger.debug("Returning converted rates result")
     return rates

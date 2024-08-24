@@ -7,10 +7,13 @@ load_dotenv(os.path.join(basedir, '.env'))
 
 
 class Config:
+    ENV = os.environ.get("ENV", "development")
     SERVER_PORT = int(os.environ.get("PORT") or 5000)
     SQLALCHEMY_DATABASE_URI = os.getenv('DB_URL')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     API_PREFIX = "/v1"
+    RETRY_DELAY = 10
+    RETRY_MAX = 5
     DATABASE_CONFIG = {
         'dbname': os.environ.get("DB_NAME") or "postgres",
         'user': os.environ.get("DB_USER"),

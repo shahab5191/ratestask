@@ -26,6 +26,8 @@ def rates_endpoint():
         dict: A JSON object containing either the rate data under the "rates" key 
         or an error message under the "error" key.
     """ # noqa
+
+    logger.debug("Rate request received")
     try:
         query_param_schema = RateQueryParams
         query_params = {
@@ -34,16 +36,21 @@ def rates_endpoint():
                 "origin": request.args.get("origin"),
                 "destination": request.args.get("destination")
         }
+
+        logger.debug("Validating request params")
         validated_params = query_param_schema.model_validate(query_params)
+        logger.debug("Request param validation finished successfully")
 
         rates = get_rates(validated_params)
+        logger.debug("Rates fetched successfully")
 
     except ValidationError as ve:
-        logger.error("Error while validating query:", ve)
+        logger.warning("Error while validating query:", ve)
         return {"error": "query parameters are not valid!"}, 400
 
     except Exception as e:
         logger.error("Error while running rates query:", e)
         return {"error": "Internal error"}, 500
 
+    logger.debug("Returning rate query result")
     return {"rates": rates}
