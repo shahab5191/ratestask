@@ -31,7 +31,7 @@ def configure_logging(app: Flask):
     Example:
         app = Flask(__name__)
         configure_logging(app)
-    """
+    """ # noqa
 
     if app.config.get("ENV") == "TESTING":
         return

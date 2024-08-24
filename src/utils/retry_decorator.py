@@ -27,7 +27,8 @@ def retry(func):
             # Function implementation here
 
         connect_to_database()
-    """
+    """ # noqa
+
     def wrapper(*args, **kwargs):
         for i in range(Config.RETRY_MAX):
             try:
