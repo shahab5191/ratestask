@@ -22,7 +22,10 @@
                         <div class="author">
                             <h2>Author</h2>
                             <p><span>Name</span><span>Shahab Oveysi</span></p>
-                            <p><span>Email</span><span>oveysi.shahab@gmail.com</span></p>
+                            <p>
+                                <span>Email</span
+                                ><span>oveysi.shahab@gmail.com</span>
+                            </p>
                         </div>
                     </div>
                     <div class="input-section">
@@ -78,7 +81,10 @@
                         {% for row in table_data %}
                         <div class="rows">
                             <div>{{ row.day }}</div>
-                            <div>$ {{ row.average_price }}</div>
+                            <div>
+                                {% if row.average_price %} $ {{ row.average_price
+                                }} {% else %} No price available {% endif %}
+                            </div>
                         </div>
                         {% endfor %}
                     </div>
