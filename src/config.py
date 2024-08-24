@@ -11,6 +11,8 @@ class Config:
     SQLALCHEMY_DATABASE_URI = os.getenv('DB_URL')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     API_PREFIX = "/v1"
+    RETRY_DELAY = 5
+    RETRY_MAX = 5
     DATABASE_CONFIG = {
         'dbname': os.environ.get("DB_NAME") or "postgres",
         'user': os.environ.get("DB_USER"),
