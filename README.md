@@ -40,7 +40,7 @@ Welcome to Rates Task! Here\'s how to get started:
     $env:DB_PASSWORD = "password for database"
     ```
 
-2.  **Run Tests and Lint**
+4.  **Run Tests and Lint**
 
     run Tests and Linter to make sure everything works fine.
 
@@ -63,7 +63,7 @@ Welcome to Rates Task! Here\'s how to get started:
     docker-compose down --volumes --remove-orphans
     ```
 
-3.  **Run Server and Database**
+5.  **Run Server and Database**
 
     Then you can build Docker containers and run them.
 
@@ -81,7 +81,7 @@ Welcome to Rates Task! Here\'s how to get started:
     docker-compose up --build -d
     ```
 
-4.  **Send Request**
+6.  **Send Request**
 
     Now you can send HTTP requests to the server.
 
