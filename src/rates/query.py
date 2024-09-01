@@ -106,3 +106,64 @@ def get_rates(params: RateQueryParams):
     rates = convert_to_dict(colnames, rows, date_format="%Y-%m-%d")
     logger.debug("Returning converted rates result")
     return rates
+
+
+def get_rates_from_m_view(params: RateQueryParams):
+    query = """
+        WITH origin_ports_list as (
+            SELECT
+                unnest(ports) as port
+            FROM region_ports
+            WHERE region_ports.region_slug = %(origin)s
+
+            UNION ALL
+            
+            SELECT
+                code as port
+            FROM ports
+            WHERE ports.code = %(origin)s
+
+        ),
+        destination_ports_list as (
+            SELECT
+                unnest(ports) as port
+            from region_ports
+            where region_ports.region_slug = %(destination)s
+
+            UNION ALL
+            
+            SELECT
+                code as port
+            from ports
+            WHERE ports.code = %(destination)s
+        ),
+        prices_list as (
+            SELECT pr."day", ROUND(AVG(pr.price), 2) as average_price
+            FROM prices pr
+            WHERE
+                pr."day" >= %(date_from)s
+            AND 
+                pr."day" <= %(date_to)s
+            AND
+                pr.orig_code IN (select port from origin_ports_list)
+            AND
+                pr.dest_code IN (select port from destination_ports_list)
+            GROUP BY pr."day"
+            HAVING COUNT(*) > 2
+        )
+        SELECT to_char(d.day, 'yyyy-mm-dd') as day, COALESCE(average_price, NULL) as average_price
+        FROM generate_series(
+                %(date_from)s::date,
+                %(date_to)s::date,
+                '1 day'::interval
+            ) AS d(day)
+        LEFT JOIN prices_list pd
+        ON d.day = pd.day;
+    """ # noqa
+    logger.debug("Sending query for execution")
+    colnames, rows = execute_query(query, params.model_dump())
+    logger.debug("Query result returned")
+
+    rates = convert_to_dict(colnames, rows, date_format="%Y-%m-%d")
+    logger.debug("Returning converted rates result")
+    return rates
