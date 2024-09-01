@@ -45,9 +45,13 @@ CREATE TABLE prices (
     dest_code text NOT NULL,
     day date NOT NULL,
     price integer NOT NULL
-);
+) PARTITION BY RANGE (day);
 
+CREATE TABLE prices_2016_01 PARTITION OF prices
+    FOR VALUES FROM ('2016-01-01') TO ('2016-02-01');
 
+CREATE TABLE prices_2016_02 PARTITION OF prices
+    FOR VALUES FROM ('2016-02-01') TO ('2016-03-01');
 --
 -- Name: regions; Type: TABLE; Schema: tasks; Owner: -
 --
@@ -56967,6 +56971,17 @@ china_north_main	China North Main	china_main
 \.
 
 
+-- Duplicating data and putting them in next month
+INSERT INTO prices (orig_code, dest_code, day, price)
+SELECT
+    orig_code,
+    dest_code,
+    REPLACE(day::text, '2016-01-', '2016-02-')::date AS day,
+    price
+FROM prices
+WHERE day >= '2016-01-01' AND day < '2016-01-29';
+
+
 --
 -- Name: ports ports_pkey; Type: CONSTRAINT; Schema: tasks; Owner: -
 --
@@ -56995,7 +57010,7 @@ ALTER TABLE ONLY ports
 -- Name: prices prices_dest_code_fkey; Type: FK CONSTRAINT; Schema: tasks; Owner: -
 --
 
-ALTER TABLE ONLY prices
+ALTER TABLE prices
     ADD CONSTRAINT prices_dest_code_fkey FOREIGN KEY (dest_code) REFERENCES ports(code);
 
 
@@ -57003,7 +57018,7 @@ ALTER TABLE ONLY prices
 -- Name: prices prices_orig_code_fkey; Type: FK CONSTRAINT; Schema: tasks; Owner: -
 --
 
-ALTER TABLE ONLY prices
+ALTER TABLE prices
     ADD CONSTRAINT prices_orig_code_fkey FOREIGN KEY (orig_code) REFERENCES ports(code);
 
 
@@ -57039,11 +57054,6 @@ CREATE INDEX idx_prices_day ON prices(day);
 CREATE INDEX idx_prices_orig_dest_day ON prices(orig_code, dest_code, day);
 
 CREATE INDEX idx_region_ports_region_slug ON region_ports(region_slug);
-
--- ports table UNIQUE and INDEX
-
-ALTER TABLE ports
-    ADD CONSTRAINT unique_code UNIQUE (code);
 
 -- regions table UNIQUE and INDEX
 
