@@ -60,6 +60,38 @@ CREATE TABLE regions (
 
 
 --
+-- Name: regions_port; Type: MATERIALIZED VIEW;
+--
+
+CREATE MATERIALIZED VIEW region_ports AS
+WITH RECURSIVE region_hierarchy AS (
+    SELECT
+        r.slug AS region_slug,
+        r.slug AS root_slug
+    FROM
+        regions r
+
+    UNION ALL
+
+    SELECT
+        r.slug AS region_slug,
+        rh.root_slug AS root_slug
+    FROM
+        regions r
+    JOIN
+        region_hierarchy rh ON r.parent_slug = rh.region_slug
+)
+SELECT
+    rh.root_slug AS region_slug,
+    ARRAY_AGG(p.code ORDER BY p.code) FILTER (WHERE p.code IS NOT NULL) AS ports
+FROM
+    region_hierarchy rh
+LEFT JOIN
+    ports p ON rh.region_slug = p.parent_slug
+GROUP BY
+    rh.root_slug;
+
+--
 -- Data for Name: ports; Type: TABLE DATA; Schema: tasks; Owner: -
 --
 
@@ -57006,6 +57038,8 @@ CREATE INDEX idx_prices_dest_code ON prices(dest_code);
 CREATE INDEX idx_prices_day ON prices(day);
 CREATE INDEX idx_prices_orig_dest_day ON prices(orig_code, dest_code, day);
 
+CREATE INDEX idx_region_ports_region_slug ON region_ports(region_slug);
+
 -- ports table UNIQUE and INDEX
 
 ALTER TABLE ports
@@ -57025,3 +57059,4 @@ REINDEX TABLE ports;
 REINDEX TABLE regions;
 REINDEX TABLE prices;
 
+REFRESH MATERIALIZED VIEW region_ports;
